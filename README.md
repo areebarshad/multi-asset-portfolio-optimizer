@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-This project implements a multi-asset portfolio optimization model in Python using historical financial data.
-It builds an efficent, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
+- This project implements a multi-asset portfolio optimization model in Python using historical financial data.
+- It builds an efficent, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
 
 ## Objectives
 
@@ -72,8 +72,10 @@ It builds an efficent, diversified portfolio by applying mean-variance optimizat
   - **Apply convex optimization for real-world problems**
   - **Analyze risk-reward trade-offs for informed investment decisions**
  
-# Author
+## Author
 
-**Areeb Arshad**,
-  **Sophomore, Data Science, Economics**, 
-    **Virginia Tech**
+**Areeb Arshad**
+
+Sophomore, Data Science, Economics
+
+Virginia Tech
