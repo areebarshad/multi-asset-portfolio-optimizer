@@ -5,6 +5,8 @@
 - This project implements a multi-asset portfolio optimization model in Python using historical financial data.
 - It builds an efficent, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
 
+---
+
 ## Objectives
 
 - Download and clean historical data for a diversified set of ETFs and asset classes.
@@ -23,6 +25,8 @@
   - **Sharpe Ratio**
   - **Maximum Drawdown**
 - Extend with **turnover constraints** to model practical rebalancing limits.
+
+---
 
 ## Technology Used
 
@@ -45,6 +49,8 @@
 - `VNQ` -> REITs
 - `DBC` -> Commodities Index
 
+---
+
 ## Key Steps
 
 1. **Data Acquisition**: Download daily closing prices from 2015-2025 uding `yfinance`.
@@ -56,12 +62,16 @@
 7. **Extensions**: Turnover constraints to limit drastic rebalancing.
 8. **Display results**: View Reports folder.
 
+---
+
 ## Future Extensions 
 
 - Black-Litterman model for incorporating market views
 - Robust optimization under parameter uncertainty
 - Transaction cost modeling
 - Interactive dashboard using Streamlit
+
+---
 
 ## Why this Project is Important:
 
@@ -71,6 +81,8 @@
   - **Build a full data pipeline from acquisition to analysis and evaluation**
   - **Apply convex optimization for real-world problems**
   - **Analyze risk-reward trade-offs for informed investment decisions**
+
+---
  
 ## Author
 
@@ -79,3 +91,36 @@
 Sophomore, Data Science, Economics
 
 Virginia Tech
+
+---
+
+## Folder Structure
+
+```plaintext
+/
+├── data/
+│   ├── multiasset_benchmark.csv             
+│   ├── multiasset_closing_prices.csv            
+│   ├── multiasset_cum_returns.csv
+|   ├── multiasset_daily_returns.csv
+|   ├── multiasset_ewc.csv
+|   ├── multiasset_stats.csv
+|   ├── README.md                       
+├── notebooks/
+│   ├── Backtesting/      
+│   ├── DataAcquisition_and_Preprocessing/            
+│   ├── Extensions_Dashboard/
+│   ├── Final_Model/
+|   ├── Portfolio_Optimization/
+|   ├── README.md     
+├── plots/
+│   ├── Closing_Prices/               
+│   ├── Cumulative_Returns/ 
+│   ├── Daily_Return_Distributions/       
+│   ├── Efficient_Frontier/                     
+│   ├── Optimal_Weights/               
+│   ├── Returns_Correlation_Heatmap/
+|   ├── README.md           
+├── reports/
+|   ├── README.md            
+└── README.md
