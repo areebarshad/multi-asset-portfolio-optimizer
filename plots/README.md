@@ -1,6 +1,6 @@
 # Plots Directory
 
-This folder contains plots generated from the Multi-Asset Portfolio Optimizer model. 
+This directory contains plots generated from the Multi-Asset Portfolio Optimizer model. 
 
 ## Folder Breakdown
 
