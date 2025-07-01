@@ -1,6 +1,6 @@
 # Data Directory 
 
-This folder contains the raw and processed data used in the Multi-Asset Portfolio Optimizer project.
+This directory contains the raw and processed data used in the Multi-Asset Portfolio Optimizer project.
 
 ## Contents
 
