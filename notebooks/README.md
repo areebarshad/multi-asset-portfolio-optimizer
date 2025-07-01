@@ -1,6 +1,6 @@
 # Notebooks Directory
 
-This folder contains the Google Colab notebooks for the Multi-Asset Portfolio Optimizer project.
+This directory contains the Google Colab notebooks for the Multi-Asset Portfolio Optimizer project.
 
 ## Notebook Breakdown
 
