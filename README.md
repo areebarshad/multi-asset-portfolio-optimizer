@@ -3,7 +3,7 @@
 ## Project Overview
 
 - This project implements a multi-asset portfolio optimization model in Python using historical financial data.
-- It builds an efficent, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
+- It builds an efficient, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
 
 ---
 
