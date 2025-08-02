@@ -12,6 +12,9 @@ This directory contains the raw and processed data used in the Multi-Asset Portf
 | `multiasset_daily_returns` | Daily log returns calculated from closing prices for all assets. |
 | `multiasset_ewc.csv` | Cumulative returns of the equal-weighted portfolio for performance benchmarking. |
 | `multiasset_stats.csv` | Summary statistics including mean daily returns, standard deviations, and annualized metrics. |
+| `efficient_frontier.csv` | Volatility and expected returns of optimized portfolios along the efficient frontier. |
+| `optimal_weights.csv` | Final asset allocations for the optimized portfolio under defined constraints. |
+| `performance_metrics.csv` | Key performance indicators including return, volatility, Sharpe ratio, and max drawdown. |  
 
 All data was obtained directly through `yfinance` API calls. 
 
