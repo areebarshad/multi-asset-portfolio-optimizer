@@ -1,0 +1,12 @@
+,Portfolio,Annual Return,Annual Volatility,Sharpe Ratio,Max Drawdown
+0,Optimized,0.04675658861769489,0.11178523131310203,0.4182716094824119,-0.2528822681867532
+1,Equal Weight,0.046252651044966266,0.1050470846286159,0.4403039951892827,-0.2327484476619518
+2,SPY Benchmark,"Ticker
+SPY    0.121975
+dtype: float64","Ticker
+SPY    0.180417
+dtype: float64","Ticker
+SPY    0.676071
+dtype: float64","Ticker
+SPY   -0.357459
+dtype: float64"
