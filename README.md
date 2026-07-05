@@ -2,95 +2,86 @@
 
 ## Project Overview
 
-- This project implements a multi-asset portfolio optimization model in Python using historical financial data.
-- It builds an efficient, diversified portfolio by applying mean-variance optimization (**Markowitz Portfolio Theory**) under practical constraints and analyzes its performance through backtesting and risk metrics.
+This project implements a multi-asset portfolio optimization model in Python using historical financial data. It builds an efficient, diversified portfolio by applying **tangency (max Sharpe) optimization** with **Ledoit-Wolf covariance shrinkage** and **Black-Litterman expected returns**, and evaluates performance through walk-forward backtesting and risk metrics.
 
 ---
 
 ## Objectives
 
-- Download and clean historical data for a diversified set of ETFs and asset classes.
-- Calculate daily and monthly log returns, visualize trends, distributions, and correlations.
-- Optimize portfolio weights to minimize risk for a target return, with constraints:
-  - **Fully invested portfolio**
-  - **No short selling**
+- Download and clean historical price data for a diversified 15-ETF universe covering equities, fixed income, commodities, and real assets.
+- Calculate daily and monthly log returns; visualize price trends, return distributions, and correlations.
+- Optimize portfolio weights to maximize the Sharpe ratio (tangency portfolio), subject to constraints:
+  - **Fully invested portfolio** (weights sum to 1)
+  - **No short selling** (weights ≥ 0)
   - **Max 20% allocation per asset**
-- Generate the efficient frontier to analyze risk-return trade-offs.
+- Generate the efficient frontier with gross and net-of-transaction-cost curves, Capital Market Line, and tangency point.
 - Backtest the optimized portfolio against:
-  - **An equal-weight portfolio**
-  - **An `SPY` benchmark (S&P 500)**
-- Calculate performance metrics:
+  - An **equal-weight portfolio**
+  - The **SPY benchmark (S&P 500)**
+- Evaluate performance metrics:
   - **Annualized Return**
   - **Annualized Volatility**
-  - **Sharpe Ratio**
+  - **Sharpe Ratio** (risk-free rate = 4%)
   - **Maximum Drawdown**
-- Extend with **turnover constraints** to model practical rebalancing limits.
+- Extend the model with:
+  - **Turnover constraints** for practical rebalancing limits
+  - **Walk-forward backtesting** to measure out-of-sample performance
+  - **Ledoit-Wolf covariance shrinkage** for stable estimation with 15 assets
+  - **Black-Litterman + Ledoit-Wolf pipeline** for Bayesian expected return estimation
 
 ---
 
 ## Technology Used
 
 **Python**:
-- `Pandas`
-- `NumPy`
+- `pandas`
+- `numpy`
 - `matplotlib`
 - `seaborn`
 - `yfinance`
 - `cvxpy`
+- `scikit-learn` (Ledoit-Wolf)
 
-## Assets Used
+---
 
-- `VEA` -> Developed Markets ex-US
-- `VWO` -> Emerging Markets
-- `EWJ` -> Japan
-- `TLT` -> 20+ Year Treasury Bonds
-- `LQD` -> Investment Grade Corporate Bonds
-- `GLD` -> Gold
-- `VNQ` -> REITs
-- `DBC` -> Commodities Index
+## Asset Universe
+
+15 ETFs spanning major asset classes (2015–2025):
+
+| Ticker | Asset Class |
+| ------ | ----------- |
+| `VEA` | Developed Markets ex-US |
+| `VWO` | Emerging Markets |
+| `EWJ` | Japan Equities |
+| `TLT` | 20+ Year US Treasury Bonds |
+| `LQD` | Investment Grade Corporate Bonds |
+| `GLD` | Gold |
+| `VNQ` | REITs |
+| `DBC` | Broad Commodities Index |
+| `SPY` | US Large Cap (S&P 500) |
+| `QQQ` | US Large Cap Tech (NASDAQ-100) |
+| `IEF` | 7-10 Year US Treasury Bonds |
+| `HYG` | High Yield Corporate Bonds |
+| `SLV` | Silver |
+| `GSG` | Commodity Index |
+| `EMLC` | Emerging Market Local Currency Bonds |
 
 ---
 
 ## Key Steps
 
-1. **Data Acquisition**: Download daily closing prices from 2015-2025 uding `yfinance`.
-2. **Data Cleaning and Preprocessing**: Handle missing values, calculate daily and monthly log returns.
-3. **Exploratory Data Analysis**: Plot -> Price Trends, Return Distributions, Correlation Heatmap.
-4. **Mean-Variance Optimization**: Formulate the objective, set the constraints, solve using cvxpy quadratic programming.
-5. **Efficient Frontier**: Calculate portfolios for varying target returns, visualize risk-return trade-offs.
-6. **Backtesting**: Optimized portfolio VS equal-weight portfolio VS SPY benchmark
-7. **Extensions**: Turnover constraints to limit drastic rebalancing.
-8. **Display results**: View Reports folder.
-
----
-
-## Future Extensions 
-
-- Black-Litterman model for incorporating market views
-- Robust optimization under parameter uncertainty
-- Transaction cost modeling
-- Interactive dashboard using Streamlit
-
----
-
-## Why this Project is Important:
-
-- Portfolio optimization is a core concept in quantitative finance and asset management.
-- This project demonstrates the ability to:
-  - **Integrate financial mathematics, statistics, and optimization**
-  - **Build a full data pipeline from acquisition to analysis and evaluation**
-  - **Apply convex optimization for real-world problems**
-  - **Analyze risk-reward trade-offs for informed investment decisions**
-
----
- 
-## Author
-
-**Areeb Arshad**
-
-Sophomore, Data Science, Economics
-
-Virginia Tech
+1. **Data Acquisition**: Download daily closing prices from 2015–2025 using `yfinance`. No CSV files — all data is fetched live.
+2. **Data Cleaning and Preprocessing**: Handle missing values with forward-fill/back-fill; calculate daily and monthly log returns.
+3. **Exploratory Data Analysis**: Plot price trends, return distributions, and a pairwise correlation heatmap.
+4. **Tangency Portfolio Optimization**: Maximize Sharpe ratio via CVXPY quadratic programming using a variable substitution formulation.
+5. **Efficient Frontier**: Sweep target returns to trace the frontier; overlay net-of-cost curve (10bps), Capital Market Line, and tangency point.
+6. **Backtesting**: Compare optimized portfolio vs equal-weight portfolio vs SPY benchmark.
+7. **Extensions**:
+   - Turnover-constrained rebalancing (10% limit)
+   - Walk-forward backtest with 3-year rolling training windows
+   - Ledoit-Wolf covariance shrinkage
+   - Black-Litterman + Ledoit-Wolf combined pipeline (views: GLD 8%, TLT 2%)
+8. **Performance Summary**: Comparative table across MVO, LW, BL+LW, and walk-forward strategies.
 
 ---
 
@@ -98,29 +89,51 @@ Virginia Tech
 
 ```plaintext
 /
-├── data/
-│   ├── multiasset_benchmark.csv             
-│   ├── multiasset_closing_prices.csv            
-│   ├── multiasset_cum_returns.csv
-|   ├── multiasset_daily_returns.csv
-|   ├── multiasset_ewc.csv
-|   ├── multiasset_stats.csv
-|   ├── README.md                       
 ├── notebooks/
-│   ├── Backtesting/      
-│   ├── DataAcquisition_and_Preprocessing/            
+│   ├── DataAcquisition_and_Preprocessing/
+│   │   └── DataAcquisition_Preprocessing.py
+│   ├── Portfolio_Optimization/
+│   │   └── Portfolio_Optimization.py
+│   ├── Backtesting/
+│   │   └── Backtesting.py
 │   ├── Extensions_Dashboard/
+│   │   └── Extensions_Dashboard.py
 │   ├── Final_Model/
-|   ├── Portfolio_Optimization/
-|   ├── README.md     
+│   │   └── model.py
+│   └── README.md
 ├── plots/
-│   ├── Closing_Prices/               
-│   ├── Cumulative_Returns/ 
-│   ├── Daily_Return_Distributions/       
-│   ├── Efficient_Frontier/                     
-│   ├── Optimal_Weights/               
+│   ├── Closing_Prices/
+│   ├── Daily_Return_Distributions/
 │   ├── Returns_Correlation_Heatmap/
-|   ├── README.md           
+│   ├── Optimal_Weights/
+│   ├── Efficient_Frontier/
+│   ├── Cumulative_Returns/
+│   ├── Walk_Forward_Backtest/
+│   └── README.md
 ├── reports/
-|   ├── README.md            
+│   └── README.md
 └── README.md
+```
+
+---
+
+## Why This Project Matters
+
+Portfolio optimization sits at the intersection of financial mathematics, statistics, and convex optimization. This project demonstrates:
+
+- **End-to-end data pipeline**: from live data acquisition to performance evaluation
+- **Convex optimization**: CVXPY quadratic programming with real-world constraints
+- **Bayesian estimation**: Black-Litterman model for incorporating analyst views into expected returns
+- **Robust statistics**: Ledoit-Wolf shrinkage to handle estimation error in high-dimensional covariance matrices
+- **Rigorous backtesting**: walk-forward evaluation to measure genuine out-of-sample performance
+- **Risk-reward analysis**: efficient frontier, Sharpe ratio, max drawdown, and transaction cost modeling
+
+---
+
+## Author
+
+**Areeb Arshad**
+
+Sophomore, Data Science & Economics
+
+Virginia Tech

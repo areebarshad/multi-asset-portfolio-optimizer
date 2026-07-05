@@ -1,93 +1,111 @@
 # Portfolio Optimization Final Report
 
-This report summarizes the **key findings** and **analytical results** from the Milti-Asset Portfolio Optimization Model.
+This report summarizes the **key findings** and **analytical results** from the Multi-Asset Portfolio Optimization Model.
 
 ## 1. Objective
 
-To build an optimized multi-asset portfolio that:
+Build an optimized multi-asset portfolio that:
 
-- Minimizes portfolio **volatility**
-- Achieves a **target annual return** of 5%
+- Maximizes the **Sharpe ratio** (tangency portfolio formulation)
 - Respects the following constraints:
-  - Fully invested portfolio
-  - No short-selling
-  - Max 20% allocation per asset
- 
-## 2. Data Summary
+  - Fully invested (weights sum to 1)
+  - No short selling (weights ≥ 0)
+  - Maximum 20% allocation per asset
 
-Values derived from mean daily returns scaled to annual using 252 trading days. 
+## 2. Asset Universe
 
-| Ticker | Annualized Return | Annualized Volatility |
-| ------ | ----------------- | --------------------- |
-| `DBC` | 2.99% | 17.90% |
-| `EWJ` | 6.53% | 17.45% |
-| `GLD` | 9.50% | 14.46% |
-| `LQD` | 2.50% | 8.58% |
-| `TLT` | -0.94% | 15.25% |
-| `VEA` | 6.92% | 17.54% |
-| `VNQ` | 4.74% | 20.99% |
-| `VWO` | 5.02% | 19.94% |
+15-asset ETF universe covering equities, fixed income, commodities, and real assets (2015–2025):
 
-## 3. Optimization Results
+| Ticker | Asset Class |
+| ------ | ----------- |
+| `VEA` | Developed Markets ex-US |
+| `VWO` | Emerging Markets |
+| `EWJ` | Japan Equities |
+| `TLT` | 20+ Year US Treasury Bonds |
+| `LQD` | Investment Grade Corporate Bonds |
+| `GLD` | Gold |
+| `VNQ` | REITs |
+| `DBC` | Broad Commodities Index |
+| `SPY` | US Large Cap (S&P 500) |
+| `QQQ` | US Large Cap Tech (NASDAQ-100) |
+| `IEF` | 7-10 Year US Treasury Bonds |
+| `HYG` | High Yield Corporate Bonds |
+| `SLV` | Silver |
+| `GSG` | Commodity Index |
+| `EMLC` | Emerging Market Local Currency Bonds |
 
-| Metric | Value |
-| ------ | ----- |
-| **Expected Portfolio Return** | 5% |
-| **Expected Portfolio Volatility** | 9.19% |
+## 3. Methodology
 
-## 4. Portfolio Weights
+### Optimization: Tangency Portfolio (Max Sharpe)
 
-### Robust Optimal Weights
+The final model solves for the **tangency portfolio** — the point on the efficient frontier that maximizes the Sharpe ratio — using a variable substitution to convert the fractional-programming problem into a convex quadratic program solved by CVXPY.
 
-| Ticker | Weight |
-| ------ | ------ |
-| `DBC` | 20.00% |
-| `EWJ` | 20.00% |
-| `GLD` | 20.00% |
-| `LQD` | 13.22% |
-| `TLT` | 15.69% |
-| `VEA` | 0.00% |
-| `VNQ` | 0.00% |
-| `VWO` | 0.00% |
+Risk-free rate: **4%** (approximation for the 2015–2025 period).
 
-- Heavy allocation to commodities, Japan equities, and gold
-- No allocation to VEA, VNQ, VWO under these constraints
+### Covariance Estimation: Ledoit-Wolf Shrinkage
 
-### Optimal Weights with Turnover Constraint (10%)
+Sample covariance matrices are noisy with 15 assets. The model applies **Ledoit-Wolf shrinkage** to regularize the off-diagonal estimates and produce a more stable covariance matrix for optimization.
 
-| Ticker | Weight |
-| ------ | ------ |
-| `DBC` | 12.00% |
-| `EWJ` | 13.00% |
-| `GLD` | 15.00% |
-| `LQD` | 9.30% |
-| `TLT` | 20.00% |
-| `VEA` | 10.70% |
-| `VNQ` | 10.00% |
-| `VWO` | 10.00% |
+### Expected Returns: Black-Litterman + Ledoit-Wolf
 
-- Diversifies across all assets while limiting weight changes for practical rebalancing
+The **Black-Litterman model** blends equilibrium returns (derived by reverse-optimizing from equal weights) with two analyst views:
 
----
+- **GLD (Gold)**: 8% annual return
+- **TLT (Long Bonds)**: 2% annual return
 
-## 5. Performance Metrics 
+The Bayesian update produces posterior expected returns used in the BL+LW tangency portfolio.
 
-| Portfolio | Annual Return | Annual Volatility | Sharpe Ratio | Max Drawdown |
-| --------- | ------------- | ----------------- | ------------ | ------------ |
-| **Optimized** | 4.72% | 11.20% | 0.42 | -25.29% |
-| **Equal-Weight** | 4.66% | 10.53% | 0.44 | -23.27% |
-| **SPY Benchmark** | 12.22% | 18.10% | 0.68 | -35.75% |
+### Walk-Forward Backtest
 
-### Insights
+The model is evaluated out-of-sample using a **walk-forward backtest**: a 3-year rolling training window re-estimates Ledoit-Wolf covariances and BL+LW expected returns each period, with portfolio weights applied to the next year's returns. This avoids look-ahead bias.
 
-- The **Optimized** portfolio achieved target return with lower volatility than the **SPY Benchmark**
-- The sharpe ratio for the **Optimized** portfolio was slight less than the **Equal-Weight** portfolio, indicating trade-offs in optimization constraints
-- The annual voltility and max drawdowns were both significantly higher than the annual returns for the **SPY Benchmark** portfolio
+### Transaction Costs
+
+The **net efficient frontier** applies a 10bps cost per unit of turnover relative to the equal-weight baseline, allowing direct comparison of gross vs net risk-return profiles.
+
+## 4. Key Changes from Original Model
+
+| Dimension | Original | Final |
+| --------- | -------- | ----- |
+| Assets | 8 ETFs | 15 ETFs |
+| Objective | Min variance at 5% target return | Max Sharpe (tangency portfolio) |
+| Covariance | Sample covariance | Ledoit-Wolf shrinkage |
+| Expected returns | Historical sample mean | BL + LW Bayesian update |
+| Backtest | Single in-sample period | Walk-forward (3-year rolling window) |
+| Transaction costs | Not modeled | 10bps net frontier |
+| Sharpe calculation | No risk-free adjustment | rf = 4% subtracted |
+
+## 5. Portfolio Performance Summary
+
+Performance metrics are computed from running `notebooks/Final_Model/model.py`. The summary table compares four strategies:
+
+| Strategy | Description |
+| -------- | ----------- |
+| **Original MVO** | Tangency portfolio using sample covariance and historical mean returns |
+| **LW Only** | Tangency portfolio with Ledoit-Wolf covariance shrinkage |
+| **BL + LW** | Tangency portfolio with BL expected returns and LW covariance (full pipeline) |
+| **Walk-Forward BL+LW** | Out-of-sample walk-forward evaluation of the BL+LW strategy |
+
+All strategies are benchmarked against an **equal-weight portfolio** and **SPY**.
+
+## 6. Plots
+
+Generated plots are stored in the `plots/` directory:
+
+- Closing prices (all 15 assets)
+- Daily return distributions
+- Correlation heatmap
+- Optimal portfolio weights (tangency)
+- Efficient frontier (gross + net-of-costs + CML + tangency point)
+- Cumulative returns vs equal-weight and SPY
+- Walk-forward backtest cumulative returns
 
 ## Conclusion
 
-This portfolio optimization model demonstrates:
+The final model demonstrates:
 
-- The power of mean-variance optimization in balancing risk and return
-- The impact of constraints on achievable risk-return profiles
-- The value of backtesting to evaluate practical performance VS theoretical optimality 
+- How expanding the asset universe and switching to a max-Sharpe objective changes portfolio composition
+- The benefit of Ledoit-Wolf shrinkage for stable covariance estimation with 15 assets
+- How Black-Litterman views can tilt a portfolio toward assets with specific return expectations
+- The importance of walk-forward backtesting to measure true out-of-sample performance
+- The impact of transaction costs on net realized returns along the efficient frontier

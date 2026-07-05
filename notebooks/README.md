@@ -1,23 +1,28 @@
 # Notebooks Directory
 
-This directory contains the Google Colab notebooks for the Multi-Asset Portfolio Optimizer project.
+This directory contains the Python scripts for the Multi-Asset Portfolio Optimizer project. All files are `.py` and can be edited and run directly in VS Code.
 
-## Notebook Breakdown
+## Script Breakdown
 
-| Notebook | Description |
-| -------- | ----------- |
-| `Backtesting/` | Evaluates optimized portfolio performance against equal-weight and SPY benchmark using historical returns. |
-| `DataAcquisition_and_Preprocessing/` | Downloads multi-asset financial data, cleans missing values, and calculats daily and monthly returns. |
-| `Extensions_Dashboard/` | Contains exploratory extensions such as turnover-constrained optimization and visualization dashboard setups. |
-| `Portfolio_Optimization/` | Implements mean-variance portfolio optimization with practical constraints to derive optimal asset allocations. |
-| `Final_Model/` | Integrates data acquisition, optimization, backtesting, and evaluation into a single, final model. |
+| Script | Description |
+| ------ | ----------- |
+| `DataAcquisition_and_Preprocessing/DataAcquisition_Preprocessing.py` | Downloads 15-asset ETF closing prices via `yfinance`, handles missing values, computes daily and monthly log returns, and produces EDA plots (price trends, return distributions, correlation heatmap). |
+| `Portfolio_Optimization/Portfolio_Optimization.py` | Implements the tangency (max Sharpe) portfolio via CVXPY quadratic programming with constraints (fully invested, no short selling, ≤20% per asset). Plots portfolio weights and the efficient frontier with gross/net curves, Capital Market Line, and tangency point. |
+| `Backtesting/Backtesting.py` | Backtests the optimized portfolio against an equal-weight portfolio and the SPY benchmark. Computes annualized return, volatility, Sharpe ratio, and max drawdown for each. |
+| `Extensions_Dashboard/Extensions_Dashboard.py` | Extends the model with: turnover-constrained rebalancing, walk-forward backtesting using BL+LW weights, Ledoit-Wolf covariance shrinkage, and the full Black-Litterman + Ledoit-Wolf pipeline. Ends with a comparative performance summary table. |
+| `Final_Model/model.py` | Single consolidated script that runs the entire pipeline end-to-end, from data acquisition through the BL+LW performance summary. |
+
+## Execution Order
+
+Each script re-downloads data independently and can be run standalone. The recommended sequence if running in segments is:
+
+1. `DataAcquisition_and_Preprocessing`
+2. `Portfolio_Optimization`
+3. `Backtesting`
+4. `Extensions_Dashboard`
 
 ## Notes
 
-- All data files required for the notebooks are located in the `data/` directory. The raw sector data is fetched via `yFinance`.
-- The notebooks are executed in sequence, starting from data acquisition -> portfolio optimization -> backtesting -> extensions dashboard.
-
-## Related Information
-
-- The data folder contains the raw and processed data used in the notebooks.
-- The plots generated during the model's run are saved in the `plots/` directory.
+- All data is fetched live via `yfinance` — no CSV files are required.
+- The plots generated during each script's run match those saved in the `plots/` directory.
+- The final model expanded the asset universe from 8 to 15 ETFs and replaced min-variance optimization with a tangency (max Sharpe) formulation incorporating Ledoit-Wolf shrinkage and Black-Litterman views.
