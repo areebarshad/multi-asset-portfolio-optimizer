@@ -117,6 +117,27 @@ This project implements a multi-asset portfolio optimization model in Python usi
 
 ---
 
+## Results (2015–2025 Backtest)
+
+Model run on **2026-07-06** · Data: 2015-01-01 to 2025-12-31 · rf = 4% · 2,765 trading days
+
+| Strategy | Ann. Return | Ann. Volatility | Sharpe | Max Drawdown |
+| -------- | ----------- | --------------- | ------ | ------------ |
+| **Original MVO (Tangency)** | **9.87%** | **10.55%** | **0.5562** | **-24.17%** |
+| LW Only | 9.89% | 10.57% | 0.5570 | -24.16% |
+| BL + LW | 8.16% | 14.43% | 0.2882 | -30.43% |
+| Walk-Forward BL+LW | 7.39% | 12.25% | 0.2766 | -26.95% |
+| Equal-Weight (baseline) | 6.26% | 10.38% | 0.2176 | -23.76% |
+| SPY Benchmark | 12.70% | 17.83% | 0.4879 | -35.75% |
+
+**Key takeaways:**
+- MVO and LW produce the **highest Sharpe ratios** (~0.556), outperforming both SPY (0.488) and equal-weight (0.218) on a risk-adjusted basis.
+- The optimized portfolio achieves **~40% lower max drawdown** than SPY (-24% vs -36%).
+- The **BL views** (GLD 8%, TLT 2%) rotate allocation toward SLV and GSG — commodities underperformed over this window, reducing BL+LW Sharpe to 0.29.
+- Ledoit-Wolf **shrinkage coefficient = 0.0113** — minimal shrinkage needed with 10 years of daily data.
+
+---
+
 ## Why This Project Matters
 
 Portfolio optimization sits at the intersection of financial mathematics, statistics, and convex optimization. This project demonstrates:

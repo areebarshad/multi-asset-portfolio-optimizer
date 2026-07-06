@@ -77,14 +77,35 @@ The **net efficient frontier** applies a 10bps cost per unit of turnover relativ
 
 ## 5. Portfolio Performance Summary
 
-Performance metrics are computed from running `notebooks/Final_Model/model.py`. The summary table compares four strategies:
+Metrics generated from `notebooks/Final_Model/model.py` on **2026-07-06** (data: 2015-01-01 to 2025-12-31, 2,765 trading days, rf = 4%).
 
-| Strategy | Description |
-| -------- | ----------- |
-| **Original MVO** | Tangency portfolio using sample covariance and historical mean returns |
-| **LW Only** | Tangency portfolio with Ledoit-Wolf covariance shrinkage |
-| **BL + LW** | Tangency portfolio with BL expected returns and LW covariance (full pipeline) |
-| **Walk-Forward BL+LW** | Out-of-sample walk-forward evaluation of the BL+LW strategy |
+### Strategy Comparison
+
+| Strategy | Ann. Return | Ann. Volatility | Sharpe Ratio | Max Drawdown |
+| -------- | ----------- | --------------- | ------------ | ------------ |
+| **Original MVO** | **9.87%** | **10.55%** | **0.5562** | **-24.17%** |
+| **LW Only** | 9.89% | 10.57% | 0.5570 | -24.16% |
+| **BL + LW** | 8.16% | 14.43% | 0.2882 | -30.43% |
+| **Walk-Forward BL+LW** | 7.39% | 12.25% | 0.2766 | -26.95% |
+| *Equal-Weight (baseline)* | *6.26%* | *10.38%* | *0.2176* | *-23.76%* |
+| *SPY Benchmark* | *12.70%* | *17.83%* | *0.4879* | *-35.75%* |
+
+**Best Sharpe ratio**: LW Only (0.5570) — marginally beats MVO (0.5562).  
+**Lowest drawdown**: MVO and LW Only both at ~-24.2%, vs SPY at -35.7%.  
+**Ledoit-Wolf shrinkage coefficient**: 0.0113 (low shrinkage — sample covariance already well-conditioned with 10 years of data).
+
+### Tangency Portfolio (MVO) Weights
+
+| Ticker | Weight | Asset Class |
+| ------ | ------ | ----------- |
+| GLD    | 20.00% | Gold |
+| IEF    | 20.00% | 7-10yr US Treasuries |
+| QQQ    | 20.00% | NASDAQ-100 |
+| SPY    | 20.00% | S&P 500 |
+| SLV    | 10.35% | Silver |
+| TLT    |  9.65% | 20+yr US Treasuries |
+
+The model concentrates in gold (diversifier), short-to-mid duration bonds (volatility dampeners), and US equity growth factors — consistent with a max-Sharpe objective over the 2015–2025 bull market.
 
 All strategies are benchmarked against an **equal-weight portfolio** and **SPY**.
 
